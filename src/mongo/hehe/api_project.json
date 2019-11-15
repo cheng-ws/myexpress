@@ -1,0 +1,1 @@
+{  "name": "呵呵",  "version": "0.1.0",  "description": "精致的接口文档 你值得拥有",  "title": "你好呀",  "url": "http://127.0.0.1:3000",  "sampleUrl": false,  "defaultVersion": "0.0.0",  "apidoc": "0.3.0",  "generator": {    "name": "apidoc",    "time": "2019-05-15T07:54:32.445Z",    "url": "http://apidocjs.com",    "version": "0.17.6"  }}
