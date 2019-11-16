@@ -35,7 +35,16 @@ router.post('/add',(req,res)=>{
     res.send({err:-1,msg:'添加失败'})
   })
 })
-
+router.post('/getInfoById',(req,res)=>{
+  let {_id}=req.body
+  foodModel.find({_id})
+  .then((data)=>{
+    res.send({err:0,msg:'查询ok',list:data})
+  })
+  .catch(()=>{
+    res.send({err:-1,msg:'查询失败'})
+  })
+})
 /* 
 *@api {post} /food/getInfoByType 分类查询
 @apiName getInfoByType
@@ -80,7 +89,7 @@ router.post('/getInfoByKw',(req,res)=>{
 router.post('/del',(req,res)=>{
   let {_id}=req.body;
   //单个删除 多个删除{_id:[id1,id2]}
-  foodModel.remove({_id:id})
+  foodModel.remove({_id:_id})
   .then((data)=>{
     res.send({err:0,msg:'删除成功'})
   })
@@ -115,9 +124,15 @@ router.post('/update',(req,res)=>{
 router.post('/getInfoByPage',(req,res)=>{
   let pageSize=req.body.pageSize || 5;//设置默认值
   let page=req.body.page || 1;
-  foodModel.find().limit(Number(pageSize)).skip(Number((page-1)*pageSize))
+  let count=0;
+  foodModel.find()
+  .then((list)=>{
+    count=list.length //获取总的数据条数
+    return  foodModel.find().limit(Number(pageSize)).skip(Number((page-1)*pageSize))
+  })
   .then((data)=>{
-    res.send({err:0,msg:'分页查询成功',total:data.length,list:data,})
+    let allpage=Math.ceil(count/pageSize); //ceil向上取整
+    res.send({err:0,msg:'分页查询成功',info:{list:data,count:count,allpage:allpage}})
   })
   .catch(()=>{
     res.send({err:-1,msg:'分页查询失败'})

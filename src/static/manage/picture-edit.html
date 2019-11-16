@@ -172,13 +172,32 @@
 <script type="text/javascript" src="lib/jquery.validation/1.14.0/messages_zh.js"></script> 
 <script type="text/javascript" src="lib/webuploader/0.1.5/webuploader.min.js"></script> 
 <script type="text/javascript">
-function article_save(){
-	alert("刷新父级的时候会自动关闭弹层。")
-	window.parent.location.reload();
-}
+
 let imgUrl=null;
+let _id=localStorage.getItem('food_id')
+getInitData()
+function getInitData(){
+   
+   let params={_id}
+   $.post('http://localhost:4000/food/getInfoById',params,(data)=>{
+            if(data.err===0){
+                let obj=data.list[0]
+                imgUrl=obj.img
+                 $('#name').val(obj.name),
+                 $('#price').val(obj.price),
+                 $('#desc').val(obj.desc),
+                 $('#typeid option:checked').text(obj.typename),
+                 $('img').attr('src', 'http://localhost:4000' + obj.img)
+                 
+            }else{
+                 
+                layer.msg('获取数据失败，请重试',{icon:2,time:1000});
+            }
+    })
+}
 function submit(){
     let params={
+        _id:_id,
         name:$('#name').val(),
         price:$('#price').val(),
         desc:$('#desc').val(),
@@ -193,13 +212,13 @@ function submit(){
         } 
     }
     if(flag===true){
-        $.post('http://localhost:4000/food/add',params,(data)=>{
+        $.post('http://localhost:4000/food/update',params,(data)=>{
             if(data.err===0){
                 window.parent.location.reload(); 
-                layer.msg('新建成功！',{icon:1,time:1000});
+                layer.msg('修改成功！',{icon:1,time:1000});
             }else{
                 // window.parent.location.reload();
-                layer.msg('新建失败，请重试',{icon:2,time:1000});
+                layer.msg('修改失败，请重试',{icon:2,time:1000});
             }
         })
     }else{
@@ -209,6 +228,7 @@ function submit(){
     function doUpload() {
         let file = $('#file').get(0).files[0] //获取图片
         let formdata = new FormData() //创建空的formdata对象
+        // DeprecationWarning: collection.update is deprecated. Use updateOne, updateMany, or bulkWrite instead
         formdata.append('hehe', file)
         console.log(file);
         $.ajax({
