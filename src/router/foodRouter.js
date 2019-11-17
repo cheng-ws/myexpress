@@ -53,15 +53,26 @@ router.post('/getInfoById',(req,res)=>{
 @apiParam {Number} typeid 类型id
 
 */
-router.post('/getInfoByType',(req,res)=>{
+router.post('/getInfoByTypeid',(req,res)=>{
   let {typeid}=req.body
-  foodModel.find({typeid})
-  .then((data)=>{
-    res.send({err:0,msg:'查询ok',list:data})
-  })
-  .catch(()=>{
-    res.send({err:-1,msg:'查询失败'})
-  })
+  if(typeid==="0"){
+    foodModel.find()
+    .then((data)=>{
+      res.send({err:0,msg:'查询ok',list:data,total:data.length})
+    })
+    .catch(()=>{
+      res.send({err:-1,msg:'查询失败'})
+    })
+  }else{
+    foodModel.find({ typeid })
+      .then((data) => {
+        res.send({ err: 0, msg: '查询ok', list: data, total: data.length })
+      })
+      .catch(() => {
+        res.send({ err: -1, msg: '查询失败' })
+      })
+  }
+  
 })
 /* 
 *@api {post} /food/getInfoByKw 关键字查询

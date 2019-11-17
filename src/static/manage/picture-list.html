@@ -33,7 +33,22 @@
 	</div> -->
 	<div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"><a href="javascript:;" onclick="datadel()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a> 
 		<a class="btn btn-primary radius" onclick="food_add('添加料理','picture-add.html')" href="javascript:;"><i class="Hui-iconfont">&#xe600;</i> 添加料理</a>
-	</span> <span class="r" id="total"></span> 
+	</span>
+	<span class="btn btn-primary radius select-box"  style="margin-left: 10px;">
+		<select class="select" onchange="selectChange(this)">
+			<option value="0">全部类别</option>
+			<option value="1">上海菜</option>
+			<option value="2">川湘菜</option>
+			<option value="3">江浙菜</option>
+			<option value="4">东北菜</option>
+			<option value="5">北京菜</option>
+		</select>
+	</span>
+	<span  style="margin-left: 10px;">
+		<input type="text" name="" id="search" placeholder="请输入关键字" style="width:150px" class="input-text">
+		<button onclick="search()" class="btn btn-success radius"><i class="Hui-iconfont">&#xe665;</i> 检索</button>
+	</span>
+	 <span class="r" id="total"></span> 
    </div>
 	<div class="mt-20">
 		<table class="table table-border table-bordered table-bg table-hover table-sort">
@@ -99,14 +114,19 @@ function getFoodList(pageSize,page){
 		  renderList(data.info.list);
 		  $('#currentPage').text(nowpage+'/'+allpage);
 		}else{
-			alert('请刷新页面')
+			layer.msg('获取数据失败，请刷新页面重试！',{icon:2,time:1000}); 
 		}
 	})
 }
 function renderList(data){
+	$('#total').html(`共有数据：<strong>${count}</strong> 条`)
+	if(!data.length){
+		$('#tbody').html(`<h3 style="text-align:center;">暂无数据</h3>`)
+        return false;
+	}
 	//根据参数 渲染表格
 	let str=""
-	$('#total').html(`共有数据：<strong>${count}</strong> 条`)
+	
 	for(let index=0;index<data.length;index++){
 		let tmpstr=`
 		        <tr class="text-c">
@@ -197,8 +217,38 @@ function jump(type){
    }
    
 }
+function search(){
+	let kw=$('#search')
+	if(kw.val()!==""){
+       $.post('http://localhost:4000/food/getInfoByKw',{kw:kw.val()},(data)=>{
+		   if(data.err===0){
+				$('#pageChange').hide()
+				count=data.total
+				renderList(data.list)
+				kw.val('')
+				layer.msg('查询成功!',{icon:1,time:1000}); 
+		   }else{
+			    kw.val('')
+			    layer.msg('获取数据失败!',{icon:2,time:1000});   
+		   }
+	   })
+	}else{
+		layer.msg('无有效数据，请重新填写!',{icon:2,time:1000});  
+	}
+}
+function selectChange(obj){ 
+		$.post('http://localhost:4000/food/getInfoByTypeid',{typeid:obj.value},(data)=>{
+			if(data.err===0){
+				$('#pageChange').hide()
+				count=data.total
+				renderList(data.list)
+				layer.msg('查询成功!',{icon:1,time:1000}); 
+			}else{
+				layer.msg('获取数据失败!',{icon:2,time:1000}); 
+			}
+		})
+}
 /*料理-添加*/
-
 function food_add(title,url){
 	//框架内置方法，实现页面跳转
 	var index = layer.open({
