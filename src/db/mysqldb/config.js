@@ -2,7 +2,7 @@
 module.exports = {
     host : 'localhost',
     port: 3306,
-    database: 'mynode',
+    database: 'newbase',
     user: 'root',
     password: '123456'
 };

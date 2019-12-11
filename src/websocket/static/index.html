@@ -1,39 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.js"></script>
+    <!-- <script src="websocket.js"></script> -->
 </head>
+
 <body>
+   
     <input type="text" style="border:1px solid goldenrod" id="name">
     <button onclick="sendserver()">send server</button>
     <div id='messages'>
     </div>
     <script>
-         const ws = new WebSocket('ws://localhost:8000/')
-         ws.onopen = function(){
-             $("<br /><span style='float:left;'>服务器已链接......</span>").appendTo($("#messages")); 
-             console.log('服务器已链接');
-         }
-         ws.onmessage = (msg)=>{
-            let str='服务器端: '+msg.data
-            $(`<br /><span style='float:left;'>${str}</span>`).appendTo($("#messages")); 
+        const ws = new WebSocket(`ws://localhost:8000/`)
+        // const msgObj = {
+        //     toId: 666,
+        //     type: 'hello',
+        //     data: 'message......'
+        // }
+        // const msgStr = JSON.stringify(msgObj)
+        //     // 在原型对象上增加的 sendTo 方法
+        // if (!WebSocket.prototype.sendTo) {
+        //     WebSocket.prototype.sendTo = function(toId, type, data) {
+        //         const msg = JSON.stringify({
+        //             toId,
+        //             type,
+        //             data
+        //         });
+        //         this.send(msg);
+        //     }
+        // }
 
-             console.log('来自服务器端的数据: '+msg.data);
-         }
-         ws.onclose=()=>{
-             console.log('服务器关闭');
-         }
-         function sendserver(){
-             let msg=$('#name').val()
-             let str='客户端: '+msg
-             $(`<br /><span style='float:right;'>${str}</span>`).appendTo($("#messages")); 
+        // 调用形式
+        // ws.sendTo(toId, type, data);
+        ws.onopen = function() {
+            $("<br /><span style='float:left;'>服务器已链接......</span>").appendTo($("#messages"));
+            console.log('服务器已链接');
+            
+        }
+        ws.onmessage = (msg) => {
+            let str = '服务器端: ' + msg.data
+            $(`<br /><span style='float:left;'>${str}</span>`).appendTo($("#messages"));
 
-             ws.send(msg)
-         }
+            console.log('来自服务器端的数据: ' + msg.data);
+        }
+        ws.onclose = () => {
+            console.log('服务器关闭');
+        }
+
+        function sendserver() {
+            let msg = $('#name').val()
+            let str = '客户端: ' + msg
+            $(`<br /><span style='float:right;'>${str}</span>`).appendTo($("#messages"));
+
+            ws.send(msg)
+        }
     </script>
 </body>
+
 </html>
