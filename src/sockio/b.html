@@ -10,7 +10,7 @@
 <body>
    <script>
        var socket = io.connect('http://localhost:8081');
-       sessionStorage.setItem('name','a')
+       sessionStorage.setItem('name','b')
        socket.emit('serve',{name:sessionStorage.getItem('name')})
        //链接服务器
       
@@ -18,11 +18,9 @@
             console.log(msg);
             
             if(msg==='1'){
-              socket.emit('serve',{to:'b',from:sessionStorage.name,data:"我是a"})
-            }else if(msg.data){
-                 console.log(msg);   
+              socket.emit('serve',{to:'a',from:sessionStorage.name,data:"我是b"})
             }else{
-                  console.log('error'); 
+                console.log('请重试！');
             }
        })
        
