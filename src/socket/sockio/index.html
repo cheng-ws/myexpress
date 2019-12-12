@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="socket.io.js"></script>
+    <script src="jquery.min.js"></script>
+    <link rel="stylesheet" href="./index.css">
+    <script>
+        let list=[]
+        
+        $(function(){
+           
+            var socket = io.connect('http://192.168.1.83:8080');
+            socket.on('servers', function (data) {
+                if(data){
+                    $('#left_msg_list').append('<li>'+data+'上线了</li>')
+                }
+            });
+            if(sessionStorage.name){
+                $('#user').hide();
+                $('#user_msg').show().html(`<span>${sessionStorage.name}上线</span>`)
+                socket.emit('new user',sessionStorage.name)
+            }
+            $('#user_login').click(function(e){
+                var from = $('#user_name').val()
+                if(from==="")
+                {
+                    alert('用户没上线!')
+                }else{
+                    sessionStorage.setItem('name',from)
+                    $('#user').hide();
+                    $('#user_msg').show().html(`<span>我是----${sessionStorage.name}</span>`)
+                    console.log(sessionStorage.getItem('name'));
+                    socket.emit('new user',sessionStorage.name) 
+                }
+                 
+            })
+            $('#left_send_btn').click(function(e){
+                var msg=$('#left_send_value').val(),
+                    to = $('#left_send_to').val(),
+                    from=sessionStorage.name;
+                    console.log(from,to, msg);
+                    
+                    socket.emit('private message',from,to,msg);
+                    list.push({
+                        from,to,msg
+                    })
+                    $('#left_msg_list').append('<li>'+from+'说：'+msg+'</li>')
+                    $('#left_send_value').val('')      
+            })
+            $('#left_send_btn_chat').click(function(e){
+                console.log(list);
+                $('#left_msg_list').html('')
+                for(let i=0;i<list.length;i++){
+                    $('#left_msg_list').append('<li>'+list[i].from+'说：'+list[i].msg+'</li>')
+                }
+            })
+            socket.on('to'+sessionStorage.getItem('name'),function(data,cb){
+                console.log(data);
+                list.push({
+                        from:data.from,
+                        to:data.to,
+                        msg:data.message
+                    })
+                $('#left_msg_list').append('<li>'+data.from+'说：'+data.message+'</li>')
+            })
+        })
+    </script>
+</head>
+
+ 
+<body>
+    <div class="wrap">
+        <div class="left" id="left">
+            <div id="left_msg" class="left_msg">
+                <ul id="left_msg_list">
+
+                </ul>
+            </div> 
+            <hr />
+            <div id="left_send">
+                接收者：<input type='text' id="left_send_to" />
+                信息：<input type="text" id="left_send_value" />
+                <button id="left_send_btn">发送</button>
+                <button id="left_send_btn_chat">聊天记录</button>
+            </div>
+            
+        </div>
+        <div class="right">
+           <div class="user" id="user">
+               姓名：<input id="user_name" type="text" />
+               <button id="user_login">上线</button>
+               <hr />
+           </div>
+           <div id="user_msg" class="user" style="display: none;">
+               
+           </div>
+           <div id="user_online">
+               <hr />
+              <ul id="user_online_list">
+
+              </ul>
+           </div>
+        </div>
+    </div>
+</body>
+</html>

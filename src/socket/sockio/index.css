@@ -1,0 +1,32 @@
+html,body{
+    margin: 0;
+    padding: 0;
+}
+.wrap{
+    box-sizing:border-box;
+    width: 100%;
+    height: 100%;
+   
+}
+.left{
+    width: 70%;
+    height: 100vh;
+    float: left;
+    border-right:1px solid gray;
+}
+.right{
+    height: 100vh;  
+}
+.right .user{
+    height: 100px;
+   
+}
+.left_msg{
+    height: 70vh;
+}
+li{
+    list-style: none;
+    height: 30px;
+    line-height: 30px;
+}
+ 
