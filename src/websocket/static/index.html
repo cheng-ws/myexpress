@@ -17,7 +17,7 @@
     <div id='messages'>
     </div>
     <script>
-        const ws = new WebSocket(`ws://localhost:8000/`)
+        const ws = new WebSocket(`ws://localhost:4000/`)
         // const msgObj = {
         //     toId: 666,
         //     type: 'hello',
@@ -44,10 +44,14 @@
             
         }
         ws.onmessage = (msg) => {
-            let str = '服务器端: ' + msg.data
-            $(`<br /><span style='float:left;'>${str}</span>`).appendTo($("#messages"));
-
-            console.log('来自服务器端的数据: ' + msg.data);
+            let json=JSON.parse(msg.data);
+            if(json.from==="server"){
+                $(`<br /><span style='float:left;'>${json.msg}</span>`).appendTo($("#messages"));
+            }else {
+                
+                $(`<br /><span style='float:left;'>${json.from}:${json.msg}</span>`).appendTo($("#messages"));
+            }
+          
         }
         ws.onclose = () => {
             console.log('服务器关闭');
@@ -58,7 +62,7 @@
             let str = '客户端: ' + msg
             $(`<br /><span style='float:right;'>${str}</span>`).appendTo($("#messages"));
 
-            ws.send(msg)
+            ws.send(JSON.stringify({from:'1',msg:msg,to:'2'}))
         }
     </script>
 </body>
