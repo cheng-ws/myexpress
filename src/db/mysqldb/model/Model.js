@@ -9,7 +9,7 @@ module.exports = {
         connection.connect(function (err) {
             if (err) {
                 console.log('数据库链接失败');
-                // throw err;
+                 throw err;
             }
             console.log('数据库链接成功');
             
@@ -18,7 +18,7 @@ module.exports = {
             connection.query(sql, params, function (err, results, fields) {
                 if(err){
                     console.log('数据操作失败');
-                    // throw err;
+                    throw err;
                 }
                 //将查询出来的数据返回给回调函数
                 callback && callback(err,results,fields);
