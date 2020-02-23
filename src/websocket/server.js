@@ -1,21 +1,25 @@
 const WebSocket = require('ws');
 const wss = new WebSocket.Server({ 
-    port: 8000,//verifyClient:checkUser验证用户，要不要给连接
+    port: 4000,//verifyClient:checkUser验证用户，要不要给连接
  }, () => {
      
     console.log('socket start');
 })
-let user={};
+let  user={};
 wss.on('connection',function(client,req){
-     console.log(req.headers);
-     
-    client.on('message',function(message){
-        console.log(`[SERVER] Received:$[message]`);
-        client.send(`ECHD:${message}`,(err)=>{
-            if(err){
-                console.log(`[SERVER] error:$[err]`);
-            }
-        })
+    client.on('message',function(msg){
+        let data = JSON.parse(msg);
+        console.log(data)
+        let from = data.from;
+        let to = data.to;
+        user[from]=client;
+        if(user[to]){
+             user[to].send(JSON.stringify(data));
+        }else {
+            client.send(JSON.stringify({from:'server',msg:'对方未上线',to:to}));
+        }
+
+        // client.send('server')
     })  
 })
 // function checkUser(info){

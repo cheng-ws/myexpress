@@ -22,7 +22,7 @@ var storage = multer.diskStorage({
 var upload = multer({
     storage:storage
 })
-router.post('/upload',upload.single('hehe'),(req,res)=>{
+router.post('/upload',upload.single('image_upload'),(req,res)=>{
     //hehe 要上传图片数据的key值 必须前后端同一
     //{
     //     'hehe':图片数据
